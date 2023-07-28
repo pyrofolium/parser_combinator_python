@@ -7,7 +7,7 @@ from lib import (
     ConvertToType,
     OptionalParser,
     LazyParser,
-    tokens_to_dict,
+    tokens_to_dict,  # parser tokens default to strings. By using these conversion functions with ConvertToType you can change a collection of tokens to another value.
     string_to_bool,
     serialize_string_in_string,
     null_to_none,

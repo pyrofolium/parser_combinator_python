@@ -48,7 +48,6 @@ class ParserCombinator(ABC):
         return self * other
 
 
-
 # attempts to parse a single letter
 
 
@@ -107,7 +106,7 @@ class IgnoreParser(ParserCombinator):
 # you supply into a constructor a function that takes a list of tokens and converts those tokens into a new token.
 class ConvertToType(ParserCombinator):
     def __init__(
-            self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
+        self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
     ):
         self.converter = conversion
         self.parser = other_parser
