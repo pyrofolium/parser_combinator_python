@@ -60,26 +60,6 @@ class LetterParser(ParserCombinator):
             return None
 
 
-# attempts to parse the given word
-
-
-class WordParser(ParserCombinator):
-    def __init__(self, word: str):
-        self.word = word
-
-    def parse(self, input_str: str) -> Optional[Tuple[List[str], str]]:
-        word_parser = reduce(
-            lambda acc, x: acc + x, [LetterParser(letter) for letter in self.word]
-        )
-        result = word_parser.parse(input_str)
-        if result is None:
-            return None
-        else:
-            tokens, rest = result
-            final_token = reduce(lambda acc, x: acc + x, tokens)
-            return [final_token], rest
-
-
 # Takes in a parser on construction and returns a new parser that repeatedly applies the parser
 # until an error occurs. Then returns the tokens and consumed string before the error occured.
 # If First attempt at parsing returns an error then the parser will return None
@@ -120,7 +100,7 @@ class IgnoreParser(ParserCombinator):
 # you supply into a constructor a function that takes a list of tokens and converts those tokens into a new token.
 class ConvertToType(ParserCombinator):
     def __init__(
-        self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
+            self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
     ):
         self.converter = conversion
         self.parser = other_parser
