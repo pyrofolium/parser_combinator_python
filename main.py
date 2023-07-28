@@ -43,7 +43,7 @@ string_content_letter_parsers = [
 ]
 string_content_parser = WordParser('\\"') * reduce(
     lambda acc, x: x * acc, string_content_letter_parsers
-)
+) * any_number_parser
 quote_parser = LetterParser('"')
 string_parser = ConvertToType(
     space_parser
@@ -130,4 +130,4 @@ print(
 print(json_parser.parse("null"))
 print(json_parser.parse("true"))
 print(json_parser.parse("1.2334544"))
-print(json_parser.parse('[1,2,3,4,5, {"whateve": true}]'))
+print(json_parser.parse('[1,2,3,4,5, {"whatever": true}]'))
