@@ -2,14 +2,14 @@ from abc import ABC
 from functools import reduce
 from typing import Union, List, Dict, Optional, Tuple, Any, Callable
 
-JSON = Union[str, float, bool, List['JSON'], Dict[str, 'JSON']]
+JSON = Union[str, float, bool, List["JSON"], Dict[str, "JSON"]]
 
 
 class ParserCombinator(ABC):
     def parse(self, input_str: str) -> Optional[Tuple[List[Any], str]]:
         pass
 
-    def __add__(self, other: 'ParserCombinator') -> 'ParserCombinator':
+    def __add__(self, other: "ParserCombinator") -> "ParserCombinator":
         origin = self
 
         class Result(ParserCombinator):
@@ -28,7 +28,7 @@ class ParserCombinator(ABC):
 
         return Result()
 
-    def __mul__(self, other: 'ParserCombinator') -> 'ParserCombinator':
+    def __mul__(self, other: "ParserCombinator") -> "ParserCombinator":
         origin = self
 
         class Result(ParserCombinator):
@@ -43,6 +43,7 @@ class ParserCombinator(ABC):
 
 
 # attempts to parse a single letter
+
 
 class LetterParser(ParserCombinator):
     def __init__(self, letter: str):
@@ -61,12 +62,15 @@ class LetterParser(ParserCombinator):
 
 # attempts to parse the given word
 
+
 class WordParser(ParserCombinator):
     def __init__(self, word: str):
         self.word = word
 
     def parse(self, input_str: str) -> Optional[Tuple[List[str], str]]:
-        word_parser = reduce(lambda acc, x: acc + x, [LetterParser(letter) for letter in self.word])
+        word_parser = reduce(
+            lambda acc, x: acc + x, [LetterParser(letter) for letter in self.word]
+        )
         result = word_parser.parse(input_str)
         if result is None:
             return None
@@ -115,7 +119,9 @@ class IgnoreParser(ParserCombinator):
 # takes the results of another parser and attempts to convert the tokens returned into another token.
 # you supply into a constructor a function that takes a list of tokens and converts those tokens into a new token.
 class ConvertToType(ParserCombinator):
-    def __init__(self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]):
+    def __init__(
+        self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
+    ):
         self.converter = conversion
         self.parser = other_parser
 
@@ -196,14 +202,18 @@ def string_to_bool(input_tokens: List[str]) -> bool:
     elif input_str == "false":
         return False
     else:
-        raise Exception(f"Invalid bool conversion cannot convert {input_str} to boolean")
+        raise Exception(
+            f"Invalid bool conversion cannot convert {input_str} to boolean"
+        )
 
 
 def serialize_string_in_string(input_tokens: List[str]) -> str:
     if input_tokens[0] == input_tokens[-1] and input_tokens[0] == '"':
         return "".join(input_tokens[1:-1])
     else:
-        raise Exception(f"cannot turn {input_tokens} into string, must contain quotes in the string itself")
+        raise Exception(
+            f"cannot turn {input_tokens} into string, must contain quotes in the string itself"
+        )
 
 
 def null_to_none(input_tokens: List[str]) -> None:
