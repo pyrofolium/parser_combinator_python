@@ -9,6 +9,7 @@ class ParserCombinator(ABC):
     def parse(self, input_str: str) -> Optional[Tuple[List[Any], str]]:
         pass
 
+    # when adding two parsers together it's like parsing one after another
     def __add__(self, other: "ParserCombinator") -> "ParserCombinator":
         origin = self
 
@@ -28,6 +29,8 @@ class ParserCombinator(ABC):
 
         return Result()
 
+    # when multiplying two parsers it's parsing with the first parser then if that fails parse with
+    # with the second parser only one parser is executed.
     def __mul__(self, other: "ParserCombinator") -> "ParserCombinator":
         origin = self
 
@@ -40,6 +43,10 @@ class ParserCombinator(ABC):
                     return other.parse(input_str)
 
         return Result()
+
+    def __or__(self, other: "ParserCombinator") -> "ParserCombinator":
+        return self * other
+
 
 
 # attempts to parse a single letter
