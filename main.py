@@ -49,7 +49,8 @@ e_notation_parser = ConvertToType(
     space_parser
     + ConvertToType(exponent_parser, lambda x: "".join(x))
     + e_parser
-    + ConvertToType(sign_parser + whole_number_parser, lambda x: "".join(x)),
+    + ConvertToType(sign_parser + whole_number_parser, lambda x: "".join(x))
+    + space_parser,
     lambda x: float("".join(x)),
 )
 number_parser = float_parser * e_notation_parser * int_parser
