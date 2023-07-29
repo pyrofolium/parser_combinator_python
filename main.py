@@ -32,28 +32,22 @@ exponent_parser = NotParser(multiple_zero_parser) & (sign_parser + whole_number_
 mantissa_parser = whole_number_parser
 dot_parser = LetterParser(".")
 space_parser = OptionalParser(IgnoreParser(RepeatParser(LetterParser(" "))))
-float_parser = ConvertToType(
-    space_parser
-    + sign_parser
-    + exponent_parser
-    + dot_parser
-    + mantissa_parser
-    + space_parser,
-    lambda x: float("".join(x)),
-)
+raw_float_parser_no_spaces = sign_parser + exponent_parser + dot_parser + mantissa_parser
+float_parser_no_spaces = ConvertToType(raw_float_parser_no_spaces, lambda x: float("".join(x)))
+float_parser = ConvertToType(space_parser + raw_float_parser_no_spaces + space_parser, lambda  x: float("".join(x)))
 int_parser = ConvertToType(
     space_parser + exponent_parser + space_parser, lambda x: int("".join(x))
 )
 e_parser = LetterParser("e") * LetterParser("E")
 e_notation_parser = ConvertToType(
     space_parser
-    + ConvertToType(exponent_parser, lambda x: "".join(x))
+    + ConvertToType(raw_float_parser_no_spaces, lambda x: "".join(x))
     + e_parser
     + ConvertToType(sign_parser + whole_number_parser, lambda x: "".join(x))
     + space_parser,
     lambda x: float("".join(x)),
 )
-number_parser = float_parser * e_notation_parser * int_parser
+number_parser = e_notation_parser * float_parser * int_parser
 bool_parser = ConvertToType(
     space_parser + (WordParser("true") * WordParser("false")) + space_parser,
     string_to_bool,
@@ -157,4 +151,4 @@ print(json_parser.parse("true"))
 print(json_parser.parse("1.2334544"))
 print(json_parser.parse('[1,2,3,4,5, {"whatever": true}]'))
 print(json_parser.parse("0000.0"))  # should return None
-print(json_parser.parse("1e2"))
+print(e_notation_parser.parse("5.23e-2"))
