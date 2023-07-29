@@ -1,10 +1,15 @@
 from abc import ABC
 from functools import reduce
-from typing import Union, List, Dict, Optional, Tuple, Any, Callable
+from typing import Union, List, Dict, Optional, Tuple, Any, Callable, TypeVar, Generic
 
 JSON = Union[str, float, bool, List["JSON"], Dict[str, "JSON"]]
 
+T = TypeVar['T']
 
+
+# type class for parser combinators.
+# parser combinators are functions that take an input string and return a token and the rest of the string
+# parser combinators can be composed via + and (|| or *).
 class ParserCombinator(ABC):
     def parse(self, input_str: str) -> Optional[Tuple[List[Any], str]]:
         pass
@@ -106,7 +111,7 @@ class IgnoreParser(ParserCombinator):
 # you supply into a constructor a function that takes a list of tokens and converts those tokens into a new token.
 class ConvertToType(ParserCombinator):
     def __init__(
-        self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
+            self, other_parser: ParserCombinator, conversion: Callable[[List[Any]], Any]
     ):
         self.converter = conversion
         self.parser = other_parser
@@ -163,6 +168,12 @@ class LazyParser(ParserCombinator):
         parser = self.parser_creator()
         return parser.parse(input_str)
 
+
+# below are functions that convert a list of tokens to a token.
+# the most primitive parser combinator: LetterParser returns a token that is one letter.
+# When you begin composing the LetterParser with other LetterParsers you begin to get
+# parsers that return lists of letters. You can use these functions with ConvertToType
+# to turn those lists of letters
 
 def tokens_to_dict(input_tokens: List[JSON]) -> Dict[str, JSON]:
     if len(input_tokens) % 2 != 0:
