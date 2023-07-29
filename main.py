@@ -30,7 +30,7 @@ whole_number_parser = RepeatParser(any_number_parser)
 sign_parser = OptionalParser(LetterParser("-"))
 exponent_parser = (
     NotParser(multiple_zero_parser)  # 0000 invalid
-    & NotParser(sign_parser + zero_parser + whole_number_parser)  # 0454.3 invalud
+    & NotParser(sign_parser + zero_parser + whole_number_parser)  # 0454.3 invalid
     & (sign_parser + whole_number_parser)
 )
 mantissa_parser = whole_number_parser
@@ -162,5 +162,5 @@ print(json_parser.parse("true"))
 print(json_parser.parse("1.2334544"))
 print(json_parser.parse('[1,2,3,4,55.546E-1, {"whatever": true}]'))
 print(json_parser.parse("0000.0"))  # should return None
-print(e_notation_parser.parse("-5.23e-2"))
+print(json_parser.parse("-5.23e-2"))
 print(json_parser.parse("0.0"))
