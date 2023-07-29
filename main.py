@@ -29,15 +29,15 @@ any_number_parser = reduce(lambda acc, x: acc * x, a_bunch_of_number_parsers)
 whole_number_parser = RepeatParser(any_number_parser)
 sign_parser = OptionalParser(LetterParser("-"))
 exponent_parser = (
-        NotParser(multiple_zero_parser)  # 0000 invalid
-        & NotParser(sign_parser + zero_parser + whole_number_parser)  # 0454.3 invalud
-        & (sign_parser + whole_number_parser)
+    NotParser(multiple_zero_parser)  # 0000 invalid
+    & NotParser(sign_parser + zero_parser + whole_number_parser)  # 0454.3 invalud
+    & (sign_parser + whole_number_parser)
 )
 mantissa_parser = whole_number_parser
 dot_parser = LetterParser(".")
 space_parser = OptionalParser(IgnoreParser(RepeatParser(LetterParser(" "))))
 raw_float_parser_no_spaces = (
-        sign_parser + exponent_parser + dot_parser + mantissa_parser
+    sign_parser + exponent_parser + dot_parser + mantissa_parser
 )
 float_parser_no_spaces = ConvertToType(
     raw_float_parser_no_spaces, lambda x: float("".join(x))
@@ -70,9 +70,9 @@ string_content_letter_parsers = [
     LetterParser(i) for i in letters + upper_case + symbols
 ]
 string_content_parser = (
-        WordParser('\\"')
-        * reduce(lambda acc, x: x * acc, string_content_letter_parsers)
-        * any_number_parser
+    WordParser('\\"')
+    * reduce(lambda acc, x: x * acc, string_content_letter_parsers)
+    * any_number_parser
 )
 quote_parser = LetterParser('"')
 string_parser = ConvertToType(
@@ -88,15 +88,15 @@ null_parser = ConvertToType(
 )
 json_parser = LazyParser(
     lambda: space_parser
-            + (
-                    number_parser
-                    * bool_parser
-                    * string_parser
-                    * array_parser
-                    * object_parser
-                    * null_parser
-            )
-            + space_parser
+    + (
+        number_parser
+        * bool_parser
+        * string_parser
+        * array_parser
+        * object_parser
+        * null_parser
+    )
+    + space_parser
 )
 array_element_parser = OptionalParser(
     RepeatParser(json_parser + IgnoreParser(LetterParser(",")))
@@ -112,19 +112,19 @@ array_parser = ConvertToType(
     lambda x: x,
 )
 object_element_parser = (
-        string_parser
-        + space_parser
-        + IgnoreParser(LetterParser(":"))
-        + space_parser
-        + json_parser
-        + space_parser
+    string_parser
+    + space_parser
+    + IgnoreParser(LetterParser(":"))
+    + space_parser
+    + json_parser
+    + space_parser
 )
 object_element_parser_with_comma = (
-        object_element_parser + IgnoreParser(LetterParser(",")) + space_parser
+    object_element_parser + IgnoreParser(LetterParser(",")) + space_parser
 )
 full_object_element_parser = (
-                                     RepeatParser(object_element_parser_with_comma) + object_element_parser
-                             ) * object_element_parser
+    RepeatParser(object_element_parser_with_comma) + object_element_parser
+) * object_element_parser
 object_parser = ConvertToType(
     space_parser
     + IgnoreParser(LetterParser("{"))
