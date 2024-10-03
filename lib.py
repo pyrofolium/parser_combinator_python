@@ -185,6 +185,7 @@ class LazyParser(ParserCombinator):
 # This parser transfroms other parsers such that if the original parser parses successfully
 # it now returns an error. What was previously an error now returns empty tokens with the input string unconsumed
 # Ex: NotParser(ParseA).parse("A") returns None
+# In short this parser modifier creates a new parser inverts the results of the given parser.
 class NotParser(ParserCombinator):
     def __init__(self, other_parser: ParserCombinator):
         self.parser = other_parser

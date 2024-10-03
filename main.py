@@ -14,6 +14,24 @@ from lib import (
     NotParser,
 )
 
+
+
+# this is an example of using a parser combinator library to produce a json parser.
+# note that everything is declarative and functional
+# I simply compose primitives of the parser library together via overloaded operators + and *
+
+# the way it works is like this. I start off by building very simple primitive parsers
+# parsers like only parse the number 4 or the letter "z".
+# then I combine all of these parsers together to form the json parser. I
+# slowly build to the json parser by composing primitive parsers layer by layer
+# Composing parsers involves operators like + or *.
+# Ex: Number4Parser * LetterZParser = aParserThatCanParseZor4
+# Ex: Number4Parser + LetterZParser = aParserThatCanParseTheString"4z"
+
+# I test the parser combinator below with print statements.
+# This is just some experiments I'm doing with coding patterns, sometimes I show it off
+# if people want to see my github for jobs.
+
 WordParser = lambda word: ConvertToType(
     reduce(lambda acc, x: acc + x, [LetterParser(letter) for letter in word]),
     lambda tokens: reduce(lambda acc, x: acc + x, tokens),
@@ -23,11 +41,11 @@ zero_parser = LetterParser("0")
 # multiple zeros not allowed in json spec for ints and for floats you can't have multiple zeros on the left side of
 # the "."
 # so 0000.493 is illegal, 000000 is illegal and 0. is illegal, but 0.0 is legal, 0 is legal.
-multiple_zero_parser = zero_parser + RepeatParser(zero_parser)
-a_bunch_of_number_parsers = [LetterParser(i) for i in numbers]
-any_number_parser = reduce(lambda acc, x: acc * x, a_bunch_of_number_parsers)
-whole_number_parser = RepeatParser(any_number_parser)
-sign_parser = OptionalParser(LetterParser("-"))
+multiple_zero_parser = zero_parser + RepeatParser(zero_parser) # a parser for 1 or more zeros.
+a_bunch_of_number_parsers = [LetterParser(i) for i in numbers] # a list several parsers for single numbers,
+any_number_parser = reduce(lambda acc, x: acc * x, a_bunch_of_number_parsers) # a parser for any single digit number
+whole_number_parser = RepeatParser(any_number_parser) #can parse a list of numbers
+sign_parser = OptionalParser(LetterParser("-")) #parses the - symbol or nothing.
 exponent_parser = (
     NotParser(multiple_zero_parser)  # 0000 invalid
     & NotParser(sign_parser + zero_parser + whole_number_parser)  # 0454.3 invalid
